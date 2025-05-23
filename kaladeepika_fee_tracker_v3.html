@@ -1,6 +1,6 @@
 <script>
 window.onload = function () {
-  console.log("Tracker script loaded ✅");  // Add this line
+  console.log("Tracker script loaded ✅"); // <-- add this back here for debug
 
   const API_KEY = 'AIzaSyBIj4VgquYvxbZK3YKYzcTxjSknBBTs824';
   const SPREADSHEET_ID = '1T0V-PdffEzfdMgpjey9A5fZxr-EJ-xvHSH9gPNptuKM';
@@ -13,10 +13,31 @@ window.onload = function () {
     })
     .then(data => {
       console.log('Fetched data:', data);
-      // ...
+
+      if (!data.values || data.values.length === 0) {
+        document.getElementById("data-body").innerHTML = "<tr><td colspan='4'>No data found.</td></tr>";
+        return;
+      }
+
+      const [headers, ...rows] = data.values;
+      const totalFeeIndex = headers.findIndex(h => h.toLowerCase().includes('total fee'));
+
+      document.getElementById("table-headers").innerHTML =
+        headers.map(h => `<th>${h}</th>`).join("");
+
+      document.getElementById("data-body").innerHTML =
+        rows.map(row => {
+          return `<tr>${row.map((cell, i) => {
+            const isZeroFee = i === totalFeeIndex && (cell === "0" || cell === "0.00" || cell.trim() === "");
+            const className = isZeroFee ? "red-cell" : "";
+            return `<td class="${className}">${cell}</td>`;
+          }).join("")}</tr>`;
+        }).join("");
     })
     .catch(error => {
       console.error('Error fetching data:', error);
+      document.getElementById("data-body").innerHTML =
+        "<tr><td colspan='4'>Failed to load data.</td></tr>";
     });
 };
 </script>
