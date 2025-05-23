@@ -5,8 +5,13 @@ window.onload = function () {
   const RANGE = 'May25!A1:O160';
 
   fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`)
-    .then(response => response.json())
+    .then(response => {
+      console.log('HTTP response:', response);
+      return response.json();
+    })
     .then(data => {
+      console.log('Fetched data:', data);
+
       if (!data.values || data.values.length === 0) {
         document.getElementById("data-body").innerHTML = "<tr><td colspan='4'>No data found.</td></tr>";
         return;
@@ -34,4 +39,3 @@ window.onload = function () {
     });
 };
 </script>
-
