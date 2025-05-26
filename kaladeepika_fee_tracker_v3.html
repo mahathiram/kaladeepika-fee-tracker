@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Test Sheet</title>
-  <style>
-    .red-cell { color: red; }
-  </style>
+  <title>Test Google Sheet</title>
 </head>
 <body>
   <table border="1">
@@ -16,8 +13,6 @@
 
   <script>
     window.onload = function () {
-      console.log("Tracker script loaded ✅");
-
       const API_KEY = 'AIzaSyBIj4VgquYvxbZK3YKYzcTxjSknBBTs824';
       const SPREADSHEET_ID = '1T0V-PdffEzfdMgpjey9A5fZxr-EJ-xvHSH9gPNptuKM';
       const RANGE = 'May25!A1:O60';
@@ -25,33 +20,21 @@
       fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`)
         .then(response => response.json())
         .then(data => {
-          console.log('Fetched data:', data);
-
-          if (!data.values || data.values.length === 0) {
+          console.log("Fetched data:", data);
+          if (!data.values || data.values.length < 2) {
             document.getElementById("data-body").innerHTML = "<tr><td colspan='4'>No data found.</td></tr>";
             return;
           }
 
           const [headers, ...rows] = data.values;
-          const totalFeeIndex = headers.findIndex(h => h.toLowerCase().includes('total fee'));
-
-          document.getElementById("table-headers").innerHTML =
-            headers.map(h => `<th>${h}</th>`).join("");
+          document.getElementById("table-headers").innerHTML = headers.map(h => `<th>${h}</th>`).join("");
 
           document.getElementById("data-body").innerHTML =
-            rows.map(row => {
-              console.log('Rendering row:', row);
-              return `<tr>${row.map((cell, i) => {
-                const isZeroFee = i === totalFeeIndex && (cell === "0" || cell === "0.00" || cell.trim() === "");
-                const className = isZeroFee ? "red-cell" : "";
-                return `<td class="${className}">${cell}</td>`;
-              }).join("")}</tr>`;
-            }).join("");
+            rows.map(row => `<tr>${headers.map((_, i) => `<td>${row[i] || ''}</td>`).join('')}</tr>`).join('');
         })
         .catch(error => {
-          console.error('Error fetching data:', error);
-          document.getElementById("data-body").innerHTML =
-            "<tr><td colspan='4'>Failed to load data.</td></tr>";
+          console.error("Fetch error:", error);
+          document.getElementById("data-body").innerHTML = "<tr><td colspan='4'>Error loading data.</td></tr>";
         });
     };
   </script>
