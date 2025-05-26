@@ -1,38 +1,38 @@
 <!DOCTYPE html>
 <html>
-<script>
-  window.onload = function () {
-    const API_KEY = 'AIzaSyBIj4VgquYvxbZK3YKYzcTxjSknBBTs824';
-    const SPREADSHEET_ID = '1T0V-PdffEzfdMgpjey9A5fZxr-EJ-xvHSH9gPNptuKM';
-    const RANGE = 'May25!A1:O60';
+<head>
+  <title>Google Sheet Viewer</title>
+</head>
+<body>
+  <h1>Fee Tracker</h1>
+  <table border="1">
+    <thead>
+      <tr id="table-headers"></tr>
+    </thead>
+    <tbody id="data-body"></tbody>
+  </table>
 
-    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`)
-      .then(response => response.json())
-      .then(data => {
-        console.log("Fetched data:", data); // 👈 This is the log we want to see
+  <script>
+    window.onload = function () {
+      const API_KEY = 'AIzaSyBIj4VgquYvxbZK3YKYzcTxjSknBBTs824';
+      const SPREADSHEET_ID = '1T0V-PdffEzfdMgpjey9A5fZxr-EJ-xvHSH9gPNptuKM';
+      const RANGE = 'May25!A1:O60';
 
-        if (!data.values || data.values.length < 2) {
-          document.getElementById("data-body").innerHTML = "<tr><td colspan='4'>No data found.</td></tr>";
-          return;
-        }
+      fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`)
+        .then(response => response.json())
+        .then(data => {
+          console.log("Fetched data:", data); // ✅ You should now see this in DevTools
 
-        const [headers, ...rows] = data.values;
-        console.log("Headers:", headers);
-        console.log("Rows:", rows);
+          if (!data.values || data.values.length < 2) {
+            document.getElementById("data-body").innerHTML = "<tr><td colspan='4'>No data found.</td></tr>";
+            return;
+          }
 
-        document.getElementById("table-headers").innerHTML = headers.map(h => `<th>${h}</th>`).join("");
+          const [headers, ...rows] = data.values;
+          console.log("Headers:", headers);
+          console.log("Rows:", rows);
 
-        document.getElementById("data-body").innerHTML =
-          rows.map((row, rowIndex) => {
-            console.log(`Rendering row ${rowIndex}:`, row);
-            return `<tr>${headers.map((_, i) => `<td>${row[i] || ''}</td>`).join('')}</tr>`;
-          }).join('');
-      })
-      .catch(error => {
-        console.error("Fetch error:", error);
-        document.getElementById("data-body").innerHTML = "<tr><td colspan='4'>Error loading data.</td></tr>";
-      });
-  };
-</script>
-</body>
-</html>
+          document.getElementById("table-headers").innerHTML =
+            headers.map(h => `<th>${h}</th>`).join("");
+
+          document.getElementById("data-body").innerHTML =
