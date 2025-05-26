@@ -11,9 +11,9 @@
     </thead>
     <tbody id="data-body"></tbody>
   </table>
-
   <script>
     window.onload = function () {
+      document.addEventListener('DOMContentLoaded', function () {
       console.log("Script loaded and running...");
       const API_KEY = 'AIzaSyBIj4VgquYvxbZK3YKYzcTxjSknBBTs824';
       const SPREADSHEET_ID = '1T0V-PdffEzfdMgpjey9A5fZxr-EJ-xvHSH9gPNptuKM';
@@ -48,6 +48,7 @@
           document.getElementById("data-body").innerHTML =
             "<tr><td colspan='4'>Error loading data.</td></tr>";
         });
+      });
     };
   </script>
 </body>
