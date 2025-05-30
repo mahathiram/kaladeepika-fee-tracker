@@ -34,7 +34,7 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const SPREADSHEET_ID = '1T0V-PdffEzfdMgpjey9A5fZxr-EJ-xvHSH9gPNptuKM';
-    const SHEET_NAME = 'Jun25'; // Replace with your actual sheet/tab name
+    const SHEET_NAME = 'Jun25';
 
     const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&tq&sheet=${SHEET_NAME}`;
 
@@ -56,7 +56,7 @@
       .catch(err => {
         console.error("Error fetching sheet data:", err);
         document.getElementById("data-body").innerHTML =
-          "<tr><td colspan='4'>Error loading data.</td></tr>";
+          "<tr><td colspan='4'>Error loading data. Please check spreadsheet ID and name.</td></tr>";
       });
   });
 </script>
