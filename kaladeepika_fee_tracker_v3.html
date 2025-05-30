@@ -85,17 +85,20 @@
     fetch(url)
       .then(response => response.text())
       .then(text => {
+        // Extract JSON object from JSONP response
         const json = JSON.parse(text.substring(47, text.length - 2));
         const table = json.table;
 
-        // Filter only columns with non-empty headers
+        // Filter out columns with empty labels
         const validColumns = table.cols
           .map((col, index) => ({ label: col.label, index }))
           .filter(col => col.label.trim() !== '');
 
+        // Render table headers
         document.getElementById("table-headers").innerHTML =
           validColumns.map(col => `<th>${col.label}</th>`).join('');
 
+        // Render table rows
         document.getElementById("data-body").innerHTML =
           table.rows.map(row => {
             return `<tr>${validColumns.map(col => {
