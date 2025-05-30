@@ -1,24 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Fee Tracker</title>
   <style>
       body {
-          font-family: Arial, sans-serif;
+          font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          background-color: #f9f9f9;
           margin: 2em;
+          color: #202124;
       }
+
+      h1 {
+          text-align: center;
+          color: #3c4043;
+      }
+
       table {
-          border-collapse: collapse;
           width: 100%;
+          border-collapse: collapse;
+          background-color: white;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       }
+
+      thead {
+          background-color: #f1f3f4;
+      }
+
       th, td {
-          border: 1px solid #999;
-          padding: 0.5em;
+          padding: 12px 16px;
+          border: 1px solid #dadce0;
           text-align: left;
+          font-size: 14px;
       }
+
+      tbody tr:nth-child(even) {
+          background-color: #f8f9fa;
+      }
+
+      tbody tr:hover {
+          background-color: #e8f0fe;
+      }
+
       th {
-          background-color: #f2f2f2;
+          font-weight: 600;
+          color: #202124;
+      }
+
+      @media (max-width: 768px) {
+          table, thead, tbody, th, td, tr {
+              display: block;
+          }
+
+          th {
+              position: sticky;
+              top: 0;
+              background: #f1f3f4;
+          }
+
+          td {
+              padding: 10px;
+              border: none;
+              border-bottom: 1px solid #ccc;
+              position: relative;
+          }
       }
   </style>
 </head>
@@ -43,14 +88,21 @@
         const json = JSON.parse(text.substring(47, text.length - 2));
         const table = json.table;
 
-        const headers = table.cols.map(col => col.label || '');
-        const rows = table.rows.map(row => row.c.map(cell => cell?.v ?? ''));
+        // Filter only columns with non-empty headers
+        const validColumns = table.cols
+          .map((col, index) => ({ label: col.label, index }))
+          .filter(col => col.label.trim() !== '');
 
         document.getElementById("table-headers").innerHTML =
-          headers.map(h => `<th>${h}</th>`).join("");
+          validColumns.map(col => `<th>${col.label}</th>`).join('');
 
         document.getElementById("data-body").innerHTML =
-          rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
+          table.rows.map(row => {
+            return `<tr>${validColumns.map(col => {
+              const cell = row.c[col.index];
+              return `<td>${cell?.v ?? ''}</td>`;
+            }).join('')}</tr>`;
+          }).join('');
       })
       .catch(error => {
         console.error("Error loading data:", error);
