@@ -18,7 +18,7 @@
 
       const API_KEY = 'AIzaSyBIj4VgquYvxbZK3YKYzcTxjSknBBTs824';
       const SPREADSHEET_ID = '1T0V-PdffEzfdMgpjey9A5fZxr-EJ-xvHSH9gPNptuKM';
-      const RANGE = 'May25!A1:O60';
+      const RANGE = 'Jun25!A1:O60';
 
       fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`)
         .then(response => response.json())
