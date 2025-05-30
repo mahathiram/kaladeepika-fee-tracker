@@ -35,11 +35,10 @@
   document.addEventListener('DOMContentLoaded', function () {
     const SPREADSHEET_ID = '1T0V-PdffEzfdMgpjey9A5fZxr-EJ-xvHSH9gPNptuKM';
     const SHEET_NAME = 'Jun25';
-
     const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&tq&sheet=${SHEET_NAME}`;
 
     fetch(url)
-      .then(res => res.text())
+      .then(response => response.text())
       .then(text => {
         const json = JSON.parse(text.substring(47, text.length - 2));
         const table = json.table;
@@ -53,10 +52,10 @@
         document.getElementById("data-body").innerHTML =
           rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
       })
-      .catch(err => {
-        console.error("Error fetching sheet data:", err);
+      .catch(error => {
+        console.error("Error loading data:", error);
         document.getElementById("data-body").innerHTML =
-          "<tr><td colspan='4'>Error loading data. Please check spreadsheet ID and name.</td></tr>";
+          "<tr><td colspan='4'>Error loading data.</td></tr>";
       });
   });
 </script>
