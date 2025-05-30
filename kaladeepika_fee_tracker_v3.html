@@ -16,6 +16,11 @@
           color: #3c4043;
       }
 
+      label, select {
+          font-size: 16px;
+          margin: 10px;
+      }
+
       table {
           width: 100%;
           border-collapse: collapse;
@@ -47,28 +52,31 @@
           color: #202124;
       }
 
-      @media (max-width: 768px) {
-          table, thead, tbody, th, td, tr {
-              display: block;
-          }
-
-          th {
-              position: sticky;
-              top: 0;
-              background: #f1f3f4;
-          }
-
-          td {
-              padding: 10px;
-              border: none;
-              border-bottom: 1px solid #ccc;
-              position: relative;
-          }
+      #loading {
+          font-size: 16px;
+          margin-top: 20px;
+          color: #555;
       }
   </style>
 </head>
 <body>
 <h1>Fee Tracker</h1>
+
+<label for="sheetSelect">Select Sheet:</label>
+<select id="sheetSelect">
+  <option value="May25">May25</option>
+  <option value="Jun25">Jun25</option>
+  <option value="Jul25">Jul25</option>
+  <option value="Aug25">Aug25</option>
+  <option value="Sep25">Sep25</option>
+  <option value="Oct25">Oct25</option>
+  <option value="Nov25">Nov25</option>
+  <option value="Dec25">Dec25</option>
+  <!-- Add more sheet names here -->
+</select>
+
+<div id="loading">Loading...</div>
+
 <table>
   <thead>
   <tr id="table-headers"></tr>
@@ -79,39 +87,51 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const SPREADSHEET_ID = '1T0V-PdffEzfdMgpjey9A5fZxr-EJ-xvHSH9gPNptuKM';
-    const SHEET_NAME = 'Jun25';
-    const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&tq&sheet=${SHEET_NAME}`;
+    const sheetSelect = document.getElementById('sheetSelect');
+    const loadingIndicator = document.getElementById('loading');
 
-    fetch(url)
-      .then(response => response.text())
-      .then(text => {
-        // Extract JSON object from JSONP response
-        const json = JSON.parse(text.substring(47, text.length - 2));
-        const table = json.table;
+    function loadSheetData(sheetName) {
+      loadingIndicator.style.display = 'block';
+      const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&tq&sheet=${sheetName}`;
 
-        // Filter out columns with empty labels
-        const validColumns = table.cols
-          .map((col, index) => ({ label: col.label, index }))
-          .filter(col => col.label.trim() !== '');
+      fetch(url)
+        .then(response => response.text())
+        .then(text => {
+          const json = JSON.parse(text.substring(47, text.length - 2));
+          const table = json.table;
 
-        // Render table headers
-        document.getElementById("table-headers").innerHTML =
-          validColumns.map(col => `<th>${col.label}</th>`).join('');
+          const validColumns = table.cols
+            .map((col, index) => ({ label: col.label, index }))
+            .filter(col => col.label.trim() !== '');
 
-        // Render table rows
-        document.getElementById("data-body").innerHTML =
-          table.rows.map(row => {
-            return `<tr>${validColumns.map(col => {
-              const cell = row.c[col.index];
-              return `<td>${cell?.v ?? ''}</td>`;
-            }).join('')}</tr>`;
-          }).join('');
-      })
-      .catch(error => {
-        console.error("Error loading data:", error);
-        document.getElementById("data-body").innerHTML =
-          "<tr><td colspan='4'>Error loading data.</td></tr>";
-      });
+          document.getElementById("table-headers").innerHTML =
+            validColumns.map(col => `<th>${col.label}</th>`).join("");
+
+          document.getElementById("data-body").innerHTML =
+            table.rows.map(row => {
+              return `<tr>${validColumns.map(col => {
+                const cell = row.c[col.index];
+                return `<td>${cell?.v ?? ''}</td>`;
+              }).join('')}</tr>`;
+            }).join('');
+
+          loadingIndicator.style.display = 'none';
+        })
+        .catch(error => {
+          console.error("Error loading data:", error);
+          document.getElementById("data-body").innerHTML =
+            "<tr><td colspan='4'>Error loading data.</td></tr>";
+          loadingIndicator.style.display = 'none';
+        });
+    }
+
+    // Load default sheet on page load
+    loadSheetData(sheetSelect.value);
+
+    // Change sheet on dropdown selection
+    sheetSelect.addEventListener('change', function () {
+      loadSheetData(this.value);
+    });
   });
 </script>
 </body>
