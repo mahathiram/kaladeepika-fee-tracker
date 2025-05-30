@@ -1,7 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Fee Tracker</title>
+  <style>
+      body {
+          font-family: Arial, sans-serif;
+          margin: 2em;
+      }
+      table {
+          border-collapse: collapse;
+          width: 100%;
+      }
+      th, td {
+          border: 1px solid #999;
+          padding: 0.5em;
+          text-align: left;
+      }
+      th {
+          background-color: #f2f2f2;
+      }
+  </style>
+</head>
+<body>
+<h1>Fee Tracker</h1>
+<table>
+  <thead>
+  <tr id="table-headers"></tr>
+  </thead>
+  <tbody id="data-body"></tbody>
+</table>
+
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const SPREADSHEET_ID = '1T0V-PdffEzfdMgpjey9A5fZxr-EJ-xvHSH9gPNptuKM';
-    const SHEET_NAME = 'Jun25';  // Adjust this to your actual sheet tab name
+    const SHEET_NAME = 'Jun25'; // Replace with your actual sheet/tab name
 
     const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&tq&sheet=${SHEET_NAME}`;
 
@@ -27,3 +60,5 @@
       });
   });
 </script>
+</body>
+</html>
