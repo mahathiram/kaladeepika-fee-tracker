@@ -32,7 +32,8 @@
       table {
           width: 100%;
           border-collapse: collapse;
-          min-width: 1000px;
+          table-layout: auto; /* Auto column sizing based on content */
+          min-width: 800px;
       }
 
       thead {
@@ -61,6 +62,11 @@
       th {
           font-weight: 600;
           color: #202124;
+      }
+
+      .highlight-missing {
+          background-color: #fdecea !important;
+          color: #c0392b;
       }
 
       #loading {
@@ -136,10 +142,15 @@
 
           document.getElementById("data-body").innerHTML =
             table.rows.map(row => {
-              return `<tr>${validColumns.map(col => {
-                const cell = row.c[col.index];
-                return `<td>${cell?.v ?? ''}</td>`;
-              }).join('')}</tr>`;
+              const isActive = row.c[2]?.v === 'Active';
+              return `<tr>${
+                validColumns.map(col => {
+                  const cell = row.c[col.index];
+                  const value = cell?.v ?? '';
+                  const highlight = isActive && value === '' && col.index !== 2 ? 'highlight-missing' : '';
+                  return `<td class="${highlight}">${value}</td>`;
+                }).join('')
+              }</tr>`;
             }).join('');
 
           loadingIndicator.style.display = 'none';
